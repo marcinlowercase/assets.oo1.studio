@@ -1,0 +1,58 @@
+:root {
+    /* =========================================
+       1. BASE CONSTANTS (outsync Design Tokens)
+       ========================================= */
+    --device-corner-radius: 28px;
+    --base-radius: 28px;
+    --padding: 8px;
+    --single-line-height: 100px;
+    --max-list-height: 2;
+    --animation-speed: 300ms;
+
+    --highlight-color: blue;
+    --on-highlight: white;
+    --off-highlight: black;
+
+    /* Default global layer */
+    --layer: 0;
+}
+
+/* =========================================
+   2. REACTIVE LAYER MATH ENGINE
+   Calculated per element based on its --layer
+   ========================================= */
+* {
+    /* cornerRadiusForLayer:
+       Layer 0 = deviceCornerRadius.
+       Layer >= 1 = max(deviceCornerRadius, baseRadius) - (padding * layer). */
+    --layer-corner-radius: max(
+        0px,
+        calc(
+            max(var(--device-corner-radius), calc(var(--base-radius) * min(1, var(--layer))))
+            - (var(--padding) * var(--layer))
+        )
+    );
+
+    /* minHeightForLayer: singleLineHeight - (padding * layer * 2) */
+    --layer-min-height: calc(
+        var(--single-line-height) - (var(--padding) * var(--layer) * 2)
+    );
+
+    /* heightForLayer: max(cornerRadius * 2, minHeight) */
+    --layer-height: max(
+        calc(var(--layer-corner-radius) * 2),
+        var(--layer-min-height)
+    );
+
+    /* maxContainerSizeForLayer: (height * maxListHeight) + (padding * (maxListHeight + 1)) */
+    --layer-max-container-size: calc(
+        (var(--layer-height) * var(--max-list-height)) +
+            (var(--padding) * (var(--max-list-height) + 1))
+    );
+
+    /* animationSpeedForLayer: max(0ms, animationSpeed - (50ms * layer)) */
+    --layer-animation-speed: max(
+        0ms,
+        calc(var(--animation-speed) - (50ms * var(--layer)))
+    );
+}
